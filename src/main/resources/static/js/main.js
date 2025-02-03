@@ -44,16 +44,36 @@ function onConnected() {
     findAndDisplayConnectedUsers().then();
 }
 
+// async function findAndDisplayConnectedUsers() {
+//     const connectedUsersResponse = await fetch('/users');
+//     let connectedUsers = await connectedUsersResponse.json();
+//     connectedUsers = connectedUsers.filter(user => user.nickName !== nickname);
+//     const connectedUsersList = document.getElementById('connectedUsers');
+//     connectedUsersList.innerHTML = '';
+//
+//     connectedUsers.forEach(user => {
+//         appendUserElement(user, connectedUsersList);
+//         if (connectedUsers.indexOf(user) < connectedUsers.length - 1) {
+//             const separator = document.createElement('li');
+//             separator.classList.add('separator');
+//             connectedUsersList.appendChild(separator);
+//         }
+//     });
+// }
+
 async function findAndDisplayConnectedUsers() {
-    const connectedUsersResponse = await fetch('/users');
-    let connectedUsers = await connectedUsersResponse.json();
+    const response = await fetch(`/chatroom?nickname=${nickname}`);
+    let connectedUsers = await response.json();
+    // Define the logged-in user's nickname
     connectedUsers = connectedUsers.filter(user => user.nickName !== nickname);
+
     const connectedUsersList = document.getElementById('connectedUsers');
     connectedUsersList.innerHTML = '';
 
-    connectedUsers.forEach(user => {
+    connectedUsers.forEach((user, index) => {
         appendUserElement(user, connectedUsersList);
-        if (connectedUsers.indexOf(user) < connectedUsers.length - 1) {
+
+        if (index < connectedUsers.length - 1) {
             const separator = document.createElement('li');
             separator.classList.add('separator');
             connectedUsersList.appendChild(separator);

@@ -1,15 +1,29 @@
 package com.example.websockets.chatroom;
 
+import com.example.websockets.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ChatRoomService {
 
     private final ChatRoomRepository chatRoomRepository;
+
+    public List<String> findAllPreviousUsers(String nickname) {
+        List<ChatRoom> chatRooms = chatRoomRepository.findBySenderId(nickname);
+        // Use a Set to avoid duplicate recipient IDs
+        Set<String> recipientIds = new HashSet<>();
+        // Collect recipient IDs from the list of chat rooms
+        for (ChatRoom chatRoom : chatRooms) {
+            recipientIds.add(chatRoom.getRecipientId());
+        }
+        // Return the recipient IDs as a List
+        return new ArrayList<>(recipientIds);
+    }
 
     public Optional<String> getChatRoomId(
             String senderId,

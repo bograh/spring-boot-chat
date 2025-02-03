@@ -1,6 +1,7 @@
 package com.example.websockets.user;
 
 
+import com.example.websockets.chatroom.ChatRoomRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -10,22 +11,31 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserService {
 
-    private final UserRepository repository;
+    private final UserRepository userRepository;
+    private final ChatRoomRepository chatRoomRepository;
 
     public void saveUser(User user) {
         user.setStatus(Status.ONLINE);
-        repository.save(user);
+        userRepository.save(user);
     }
 
     public void disconnect(User user) {
-        var storedUser = repository.findById(user.getNickName()).orElse(null);
+        var storedUser = userRepository.findById(user.getNickName()).orElse(null);
         if (storedUser != null) {
             storedUser.setStatus(Status.OFFLINE);
-            repository.save(storedUser);
+            userRepository.save(storedUser);
         }
     }
 
     public List<User> findConnectedUsers() {
-        return repository.findAllByStatus(Status.ONLINE);
+        return userRepository.findAllByStatus(Status.ONLINE);
+    }
+
+    public String findUserFullnameByNickName(String nickName) {
+        return userRepository.findByNickName(nickName).getFullName();
+    }
+
+    public List<User> findAllRecipientsOfSender(String nickname) {
+        return userRepository.findAllByNickName(nickname);
     }
 }

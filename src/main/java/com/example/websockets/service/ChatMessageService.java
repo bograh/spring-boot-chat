@@ -1,9 +1,11 @@
 package com.example.websockets.service;
 
+import com.example.websockets.exception.ChatRoomNotFoundException;
 import com.example.websockets.model.ChatMessage;
 import com.example.websockets.repository.ChatMessageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +19,10 @@ public class ChatMessageService {
     public ChatMessage save(ChatMessage chatMessage) {
         var chatId = chatRoomService
                 .getChatRoomId(chatMessage.getSenderId(), chatMessage.getRecipientId(), true)
-                .orElseThrow(); // You can create your own dedicated exception
+                .orElseThrow(() -> new ChatRoomNotFoundException(
+                        "No chat room found for senderId: " + chatMessage.getSenderId() +
+                                " and recipientId: " + chatMessage.getRecipientId()
+                ));
         chatMessage.setChatId(chatId);
         repository.save(chatMessage);
         return chatMessage;

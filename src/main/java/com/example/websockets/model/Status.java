@@ -1,4 +1,4 @@
-package com.example.websockets.user;
+package com.example.websockets.model;
 
 public enum Status {
     ONLINE, OFFLINE

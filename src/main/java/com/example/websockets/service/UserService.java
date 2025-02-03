@@ -1,7 +1,10 @@
-package com.example.websockets.user;
+package com.example.websockets.service;
 
 
-import com.example.websockets.chatroom.ChatRoomRepository;
+import com.example.websockets.repository.ChatRoomRepository;
+import com.example.websockets.model.Status;
+import com.example.websockets.model.User;
+import com.example.websockets.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -31,11 +34,8 @@ public class UserService {
         return userRepository.findAllByStatus(Status.ONLINE);
     }
 
-    public String findUserFullnameByNickName(String nickName) {
-        return userRepository.findByNickName(nickName).getFullName();
+    public User findUserByNickName(String nickName) {
+        return userRepository.findByNickName(nickName);
     }
 
-    public List<User> findAllRecipientsOfSender(String nickname) {
-        return userRepository.findAllByNickName(nickname);
-    }
 }

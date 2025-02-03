@@ -1,7 +1,8 @@
-package com.example.websockets.user;
+package com.example.websockets.controller;
 
-import com.example.websockets.chatroom.ChatRoom;
-import com.example.websockets.chatroom.ChatRoomService;
+import com.example.websockets.service.ChatRoomService;
+import com.example.websockets.model.User;
+import com.example.websockets.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -9,12 +10,9 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 
 @Controller
@@ -26,18 +24,14 @@ public class UserController {
 
     @MessageMapping("/user.addUser")
     @SendTo("/user/public")
-    public User addUser(
-            @Payload User user
-    ) {
+    public User addUser(@Payload User user) {
         userService.saveUser(user);
         return user;
     }
 
     @MessageMapping("/user.disconnectUser")
     @SendTo("/user/public")
-    public User disconnectUser(
-            @Payload User user
-    ) {
+    public User disconnectUser(@Payload User user) {
         userService.disconnect(user);
         return user;
     }
@@ -48,15 +42,7 @@ public class UserController {
     }
 
     @GetMapping("/chatroom")
-    public ResponseEntity<List<HashMap<String, String>>> findChatroomUsers(@RequestParam String nickname) {
-        List<HashMap<String, String>> response = new ArrayList<>();
-        List<String> recipients = chatRoomService.findAllPreviousUsers(nickname);
-        for (String recipient : recipients) {
-            HashMap<String, String> user = new HashMap<>();
-            user.put("nickName", recipient);
-            user.put("fullName", userService.findUserFullnameByNickName(recipient));
-            response.add(user);
-        }
-        return ResponseEntity.ok().body(response);
+    public ResponseEntity<List<HashMap<String, String>>> findChatroomUsers(@RequestParam("nickname") String nickname) {
+        return ResponseEntity.ok(chatRoomService.findAllPreviousUsers(nickname));
     }
 }

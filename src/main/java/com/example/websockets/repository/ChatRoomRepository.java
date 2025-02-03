@@ -1,6 +1,6 @@
-package com.example.websockets.chatroom;
+package com.example.websockets.repository;
 
-import com.example.websockets.user.User;
+import com.example.websockets.model.ChatRoom;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;

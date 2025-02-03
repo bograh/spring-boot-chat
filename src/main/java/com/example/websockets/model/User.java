@@ -1,4 +1,4 @@
-package com.example.websockets.user;
+package com.example.websockets.model;
 
 import lombok.Getter;
 import lombok.Setter;

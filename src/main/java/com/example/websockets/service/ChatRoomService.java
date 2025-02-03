@@ -1,28 +1,35 @@
-package com.example.websockets.chatroom;
+package com.example.websockets.service;
 
-import com.example.websockets.user.User;
+import com.example.websockets.model.ChatRoom;
+import com.example.websockets.repository.ChatRoomRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ChatRoomService {
 
     private final ChatRoomRepository chatRoomRepository;
+    private final UserService userService;
 
-    public List<String> findAllPreviousUsers(String nickname) {
+    public List<HashMap<String, String>> findAllPreviousUsers(String nickname) {
         List<ChatRoom> chatRooms = chatRoomRepository.findBySenderId(nickname);
-        // Use a Set to avoid duplicate recipient IDs
         Set<String> recipientIds = new HashSet<>();
-        // Collect recipient IDs from the list of chat rooms
         for (ChatRoom chatRoom : chatRooms) {
             recipientIds.add(chatRoom.getRecipientId());
         }
-        // Return the recipient IDs as a List
-        return new ArrayList<>(recipientIds);
+        List<String> recipients = new ArrayList<>(recipientIds);
+        List<HashMap<String, String>> response = new ArrayList<>();
+        for (String recipient : recipients) {
+            HashMap<String, String> user = new HashMap<>();
+            user.put("nickName", recipient);
+            user.put("fullName", userService.findUserByNickName(recipient).getFullName());
+            user.put("status", userService.findUserByNickName(recipient).getStatus().toString());
+            response.add(user);
+        }
+        return response;
     }
 
     public Optional<String> getChatRoomId(
